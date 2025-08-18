@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operation: Sovereign Grind</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif; /* Base font for numbers */
+            background-color: #101010;
+        }
+        .font-bebas {
+            font-family: 'Bebas Neue', cursive;
+        }
+        .gold-text {
+            color: #D4AF37;
+        }
+        .progress-bar-inner {
+            transition: width 1s linear;
+        }
+        .shadow-gold {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+    </style>
+</head>
+<body class="text-gray-200 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md mx-auto bg-black border-2 border-gray-700 rounded-lg shadow-2xl p-6 md:p-8 space-y-6">
+        
+        <header class="text-center flex flex-col items-center">
+            <svg class="w-16 h-16 mb-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 22H15C18.866 22 22 18.866 22 15V9C22 5.13401 18.866 2 15 2H9C5.13401 2 2 5.13401 2 9V15C2 18.866 5.13401 22 9 22Z" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16.5 7.5L14.25 12L16.5 16.5M7.5 7.5L9.75 12L7.5 16.5" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h1 class="text-4xl font-bebas tracking-wider gold-text">Operation: Sovereign Grind</h1>
+            <p class="text-gray-400 mt-1 font-bebas tracking-wider">Live Combat Information Center</p>
+        </header>
+
+        <main class="space-y-8">
+            <div class="bg-gray-900 border border-gray-700 p-6 rounded-md text-center shadow-gold">
+                <h2 class="text-lg font-bebas tracking-widest text-gray-500">SPOILS ACCUMULATED (LIVE)</h2>
+                <p id="accumulated-earnings" class="text-5xl font-black tracking-wider gold-text mt-2 transition-all duration-300">0</p>
+                <div class="mt-3 bg-gray-800 py-1 px-3 rounded-full inline-block">
+                    <span class="text-sm font-semibold text-gray-400">Today's Spoils: </span>
+                    <span id="todays-earnings" class="text-sm font-bold gold-text">0</span>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center mb-2 font-bebas text-lg">
+                    <span id="progress-text" class="tracking-wider text-gray-300">PROGRESS: 0%</span>
+                    <span id="d-day" class="tracking-wider text-gray-400"></span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-sm h-3 border border-black">
+                    <div id="progress-bar" class="h-full rounded-sm progress-bar-inner" style="width: 0%; background-color: #D4AF37;"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="bg-gray-800 border border-gray-700 p-4 rounded">
+                    <h3 class="text-sm font-bebas tracking-widest text-gray-500">GRIND DAYS REMAINING</h3>
+                    <p id="remaining-workdays" class="text-3xl font-black tracking-wider text-gray-100 mt-1">0</p>
+                </div>
+                <div class="bg-gray-800 border border-gray-700 p-4 rounded">
+                    <h3 class="text-sm font-bebas tracking-widest text-gray-500">SPOILS REMAINING</h3>
+                    <p id="remaining-earnings" class="text-3xl font-black tracking-wider text-gray-100 mt-1 transition-all duration-300">0</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="bg-gray-900 border border-gray-700 p-4 rounded-md text-center mt-4">
+            <h3 class="font-bebas text-xl tracking-wider gold-text">TODAY'S ALPHA PROTOCOL</h3>
+            <p id="daily-mission" class="text-gray-300 mt-2 text-sm md:text-base"></p>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const START_DATE = new Date('2025-08-01T00:00:00');
+        const END_DATE = new Date('2025-12-31T23:59:59');
+        const TOTAL_EARNINGS = 24900000;
+        const TOTAL_LEAVE_DAYS = 8.5;
+        const WORK_START_HOUR = 8;
+        const WORK_END_HOUR = 17;
+
+        const HOLIDAYS = ['2025-08-15', '2025-10-03', '2025-10-06', '2025-10-07', '2025-10-08', '2025-10-09', '2025-12-25'];
+
+        const missions = [
+            "Engage NPC chatter with stoic indifference. Their noise is irrelevant to your mission.",
+            "Physical distress is a signal. Execute a tactical retreat. A walk to recalibrate focus. Weakness is not an option.",
+            "Headphones are your helmet. Block out the static. Maintain unwavering focus on the objective.",
+            "The midday meal is for refueling, not for beta socialization. Consume it alone. Recharge in solitude.",
+            "An NPC's emotional outburst is not your problem. Observe it as data. A case study in weakness.",
+            "The moment you exit the building, the mission for the day is complete. Purge all operational data from your mind until tomorrow.",
+            "This grind is not free. You are being paid handsomely for every second of your focus. Remember your worth.",
+            "Acknowledge physical signals of stress not as pain, but as the friction of progress. Adapt and overcome.",
+            "You are not an employee. You are a high-value asset executing a final contract. Act accordingly.",
+            "Your purpose here is singular: secure the final payout. All other objectives are secondary."
+        ];
+
+        // --- CALCULATION LOGIC ---
+        function isWeekend(date) { const day = date.getDay(); return day === 0 || day === 6; }
+        function isHoliday(date) { const dateString = date.toISOString().split('T')[0]; return HOLIDAYS.includes(dateString); }
+        function isWorkday(date) { return !isWeekend(date) && !isHoliday(date); }
+        
+        function calculateWorkdays(startDate, endDate) {
+            let count = 0;
+            let currentDate = new Date(startDate.getTime());
+            while (currentDate <= endDate) {
+                if (isWorkday(currentDate)) {
+                    count++;
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            return count;
+        }
+
+        const totalBaseWorkdays = calculateWorkdays(START_DATE, END_DATE);
+        const totalActualWorkdays = totalBaseWorkdays - TOTAL_LEAVE_DAYS;
+        const earningsPerDay = TOTAL_EARNINGS / totalActualWorkdays;
+        const earningsPerSecond = earningsPerDay / ((WORK_END_HOUR - WORK_START_HOUR) * 3600);
+        
+        const accumulatedEl = document.getElementById('accumulated-earnings');
+        const remainingEl = document.getElementById('remaining-earnings');
+
+        function updateDisplay() {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            const workdaysPassedBeforeToday = calculateWorkdays(START_DATE, new Date(today.getTime() - 1));
+            let earningsFromPreviousDays = workdaysPassedBeforeToday * earningsPerDay;
+
+            let todaysLiveEarnings = 0;
+            if (isWorkday(now)) {
+                const hours = now.getHours();
+                if (hours >= WORK_START_HOUR && hours < WORK_END_HOUR) {
+                    const workStartTime = new Date(today.getTime()).setHours(WORK_START_HOUR);
+                    const secondsPassedToday = (now.getTime() - workStartTime) / 1000;
+                    todaysLiveEarnings = Math.max(0, secondsPassedToday * earningsPerSecond);
+                } else if (hours >= WORK_END_HOUR) {
+                    todaysLiveEarnings = earningsPerDay;
+                }
+            }
+            
+            const totalAccumulated = earningsFromPreviousDays + todaysLiveEarnings;
+            const progressRatio = totalAccumulated / TOTAL_EARNINGS;
+            const remainingEarnings = TOTAL_EARNINGS - totalAccumulated;
+            
+            const workdaysPassedToday = calculateWorkdays(START_DATE, today);
+            const remainingBaseWorkdays = totalBaseWorkdays - workdaysPassedToday;
+            const remainingActualWorkdays = Math.max(0, remainingBaseWorkdays - TOTAL_LEAVE_DAYS).toFixed(1);
+
+            const dDayCount = Math.ceil((END_DATE - now) / (1000 * 60 * 60 * 24));
+            
+            // --- FONT SIZE ADJUSTMENT LOGIC ---
+            if (totalAccumulated >= 10000000) {
+                accumulatedEl.classList.remove('text-5xl');
+                accumulatedEl.classList.add('text-4xl');
+            } else {
+                accumulatedEl.classList.remove('text-4xl');
+                accumulatedEl.classList.add('text-5xl');
+            }
+            
+            if (remainingEarnings >= 10000000) {
+                remainingEl.classList.remove('text-3xl');
+                remainingEl.classList.add('text-2xl');
+            } else {
+                remainingEl.classList.remove('text-2xl');
+                remainingEl.classList.add('text-3xl');
+            }
+
+            // --- UPDATE DISPLAY ---
+            accumulatedEl.textContent = `${Math.floor(totalAccumulated).toLocaleString('en-US')}`;
+            document.getElementById('todays-earnings').textContent = `${Math.floor(todaysLiveEarnings).toLocaleString('en-US')}`;
+            document.getElementById('remaining-workdays').textContent = `${remainingActualWorkdays}`;
+            remainingEl.textContent = `${Math.floor(remainingEarnings).toLocaleString('en-US')}`;
+            
+            const progressPercent = (progressRatio * 100).toFixed(4);
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+            document.getElementById('progress-text').textContent = `PROGRESS: ${progressPercent}%`;
+            document.getElementById('d-day').textContent = `EXODUS: D-${dDayCount}`;
+        }
+        
+        window.onload = function() {
+            const missionIndex = Math.floor(Math.random() * missions.length);
+            document.getElementById('daily-mission').textContent = missions[missionIndex];
+            updateDisplay();
+            setInterval(updateDisplay, 1000);
+        };
+    </script>
+</body>
+</html>
