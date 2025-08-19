@@ -11,52 +11,42 @@
             font-family: 'Pretendard', sans-serif;
             background-color: #101010;
         }
-        .gold-text {
-            color: #D4AF37;
-        }
-        .progress-bar-inner {
-            transition: width 1s linear;
-        }
-        .shadow-gold {
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-        }
+        .gold-text { color: #D4AF37; }
+        .progress-bar-inner { transition: width 1s linear; }
+        .shadow-gold { box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
         .calendar-grid {
             display: grid;
             grid-template-rows: repeat(7, 1fr);
             grid-auto-flow: column;
-            gap: 2px; /* Reduced gap */
+            gap: 2px;
         }
         .day-cell {
-            width: 10px; /* Reduced size */
-            height: 10px; /* Reduced size */
-            border-radius: 2px;
-            position: relative;
+            width: 10px; height: 10px;
+            border-radius: 2px; position: relative;
         }
         .day-cell .tooltip {
-            visibility: hidden;
-            width: 120px;
-            background-color: #1f2937;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -60px;
-            opacity: 0;
+            visibility: hidden; width: 120px;
+            background-color: #1f2937; color: #fff;
+            text-align: center; border-radius: 6px;
+            padding: 5px 0; position: absolute;
+            z-index: 1; bottom: 125%; left: 50%;
+            margin-left: -60px; opacity: 0;
             transition: opacity 0.3s;
         }
-        .day-cell:hover .tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
+        .day-cell:hover .tooltip { visibility: visible; opacity: 1; }
         .day-cell.past { background-color: #374151; }
         .day-cell.today { background-color: #4ade80; }
         .day-cell.future { background-color: #1f2937; }
         .day-cell.future.workday { background-color: #D4AF37; opacity: 0.8; }
         .day-cell.future.leave { background-color: #3b82f6; opacity: 0.8; }
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-button.active {
+            color: #D4AF37;
+            border-bottom-color: #D4AF37;
+        }
     </style>
 </head>
 <body class="text-gray-200 min-h-screen flex items-center justify-center p-4">
@@ -67,14 +57,15 @@
                 <path d="M9 22H15C18.866 22 22 18.866 22 15V9C22 5.13401 18.866 2 15 2H9C5.13401 2 2 5.13401 2 9V15C2 18.866 5.13401 22 9 22Z" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M16.5 7.5L14.25 12L16.5 16.5M7.5 7.5L9.75 12L7.5 16.5" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <h1 class="text-4xl font-black tracking-tighter gold-text">Operation: Sovereign Grind</h1>
+            <h1 id="operation-title" class="text-4xl font-black tracking-tighter gold-text"></h1>
             <p class="text-gray-400 mt-1 font-semibold">Execute. Ascend. Conquer.</p>
         </header>
 
-        <footer class="bg-gray-900 border border-gray-700 p-4 rounded-md text-center">
-            <h3 class="font-black text-xl tracking-wider gold-text">Today's Alpha Protocol</h3>
-            <p id="daily-mission" class="text-gray-300 mt-2 text-sm md:text-base"></p>
-        </footer>
+        <!-- Scenario Tabs -->
+        <div class="flex justify-center border-b border-gray-700">
+            <button id="tab-sovereign" class="tab-button active font-bold py-2 px-4">Sovereign Grind (Dec)</button>
+            <button id="tab-swift" class="tab-button font-bold py-2 px-4">Swift Exit (Sep)</button>
+        </div>
 
         <main class="space-y-8">
             <div class="bg-gray-900 border border-gray-700 p-6 rounded-md text-center shadow-gold">
@@ -88,11 +79,21 @@
 
             <div>
                 <div class="flex justify-between items-center mb-2 font-bold text-lg">
-                    <span id="progress-text" class="tracking-wider text-gray-300">Progress: 0%</span>
+                    <span id="progress-text" class="tracking-wider text-gray-300">Total Progress: 0%</span>
                     <span id="d-day" class="tracking-wider text-gray-400"></span>
                 </div>
                 <div class="w-full bg-gray-700 rounded-sm h-3 border border-black">
                     <div id="progress-bar" class="h-full rounded-sm progress-bar-inner" style="width: 0%; background-color: #D4AF37;"></div>
+                </div>
+                <!-- Daily Progress Bar -->
+                <div class="mt-3">
+                    <div class="flex justify-between items-center mb-1 text-xs text-gray-400">
+                        <span>Daily Grind (08:00 - 17:00)</span>
+                        <span id="daily-progress-text">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-sm h-2">
+                        <div id="daily-progress-bar" class="h-full rounded-sm progress-bar-inner bg-green-500" style="width: 0%;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -123,19 +124,35 @@
             </div>
         </div>
 
+        <footer class="bg-gray-900 border border-gray-700 p-4 rounded-md text-center">
+            <h3 class="font-black text-xl tracking-wider gold-text">Today's Alpha Protocol</h3>
+            <p id="daily-mission" class="text-gray-300 mt-2 text-sm md:text-base"></p>
+        </footer>
+
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        const START_DATE = new Date('2025-08-01T00:00:00');
-        const END_DATE = new Date('2025-12-31T23:59:59');
-        const TOTAL_EARNINGS = 24900000;
-        let TOTAL_LEAVE_DAYS = 8.5;
-        const WORK_START_HOUR = 8;
-        const WORK_END_HOUR = 17;
+        const scenarios = {
+            sovereign: {
+                title: "Operation: Sovereign Grind",
+                startDate: new Date('2025-08-01T00:00:00'),
+                endDate: new Date('2025-12-31T23:59:59'),
+                totalEarnings: 24900000,
+                totalLeaveDays: 8.5,
+            },
+            swift: {
+                title: "Operation: Swift Exit",
+                startDate: new Date('2025-08-01T00:00:00'),
+                endDate: new Date('2025-09-30T23:59:59'),
+                totalEarnings: 3940000 * 2, // Aug + Sep Salary, NO retirement pay
+                totalLeaveDays: 5.5, // 4.5 current + 1 for Sep
+            }
+        };
+
+        let currentScenario;
+        let intervalId;
 
         const HOLIDAYS = ['2025-08-15', '2025-10-03', '2025-10-06', '2025-10-07', '2025-10-08', '2025-10-09', '2025-12-25'];
-
         const missions = [
             "Engage NPC chatter with stoic indifference. Their noise is irrelevant to your mission.",
             "Physical distress is a signal. Execute a tactical retreat. A walk to recalibrate focus. Weakness is not an option.",
@@ -149,7 +166,6 @@
             "Your purpose here is singular: secure the final payout. All other objectives are secondary."
         ];
 
-        // --- CALCULATION LOGIC ---
         function isWeekend(date) { const day = date.getDay(); return day === 0 || day === 6; }
         function isHoliday(date) { const dateString = date.toISOString().split('T')[0]; return HOLIDAYS.includes(dateString); }
         function isWorkday(date) { return !isWeekend(date) && !isHoliday(date); }
@@ -166,39 +182,51 @@
             return count;
         }
 
-        const totalBaseWorkdays = calculateWorkdays(START_DATE, END_DATE);
-        const totalActualWorkdays = totalBaseWorkdays - TOTAL_LEAVE_DAYS;
-        const earningsPerDay = TOTAL_EARNINGS / totalActualWorkdays;
-        const earningsPerSecond = earningsPerDay / ((WORK_END_HOUR - WORK_START_HOUR) * 3600);
-        
         function updateDisplay() {
+            const { startDate, endDate, totalEarnings, totalLeaveDays } = currentScenario;
+            const WORK_START_HOUR = 8;
+            const WORK_END_HOUR = 17;
+
+            const totalBaseWorkdays = calculateWorkdays(startDate, endDate);
+            const totalActualWorkdays = totalBaseWorkdays - totalLeaveDays;
+            const earningsPerDay = totalEarnings / totalActualWorkdays;
+            const earningsPerSecond = earningsPerDay / ((WORK_END_HOUR - WORK_START_HOUR) * 3600);
+            
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-            const workdaysPassedBeforeToday = calculateWorkdays(START_DATE, new Date(today.getTime() - 1));
+            const workdaysPassedBeforeToday = calculateWorkdays(startDate, new Date(today.getTime() - 1));
             let earningsFromPreviousDays = workdaysPassedBeforeToday * earningsPerDay;
 
             let todaysLiveEarnings = 0;
-            if (isWorkday(now)) {
+            let dailyProgressPercent = 0;
+
+            if (isWorkday(now) && now >= startDate && now <= endDate) {
                 const hours = now.getHours();
-                if (hours >= WORK_START_HOUR && hours < WORK_END_HOUR) {
-                    const workStartTime = new Date(today.getTime()).setHours(WORK_START_HOUR);
+                const workStartTime = new Date(today.getTime()).setHours(WORK_START_HOUR, 0, 0, 0);
+                const workEndTime = new Date(today.getTime()).setHours(WORK_END_HOUR, 0, 0, 0);
+
+                if (now.getTime() >= workStartTime && now.getTime() < workEndTime) {
                     const secondsPassedToday = (now.getTime() - workStartTime) / 1000;
                     todaysLiveEarnings = Math.max(0, secondsPassedToday * earningsPerSecond);
-                } else if (hours >= WORK_END_HOUR) {
+                    dailyProgressPercent = (secondsPassedToday / ((WORK_END_HOUR - WORK_START_HOUR) * 3600)) * 100;
+                } else if (now.getTime() >= workEndTime) {
                     todaysLiveEarnings = earningsPerDay;
+                    dailyProgressPercent = 100;
                 }
             }
             
-            const totalAccumulated = earningsFromPreviousDays + todaysLiveEarnings;
-            const progressRatio = totalAccumulated / TOTAL_EARNINGS;
-            const remainingEarnings = TOTAL_EARNINGS - totalAccumulated;
+            let totalAccumulated = earningsFromPreviousDays + todaysLiveEarnings;
+            totalAccumulated = Math.min(totalAccumulated, totalEarnings);
             
-            const workdaysPassedToday = calculateWorkdays(START_DATE, today);
+            const progressRatio = totalAccumulated / totalEarnings;
+            const remainingEarnings = totalEarnings - totalAccumulated;
+            
+            const workdaysPassedToday = calculateWorkdays(startDate, today);
             const remainingBaseWorkdays = totalBaseWorkdays - workdaysPassedToday;
-            const remainingActualWorkdays = Math.max(0, remainingBaseWorkdays - TOTAL_LEAVE_DAYS).toFixed(1);
+            const remainingActualWorkdays = Math.max(0, remainingBaseWorkdays - totalLeaveDays).toFixed(1);
 
-            const dDayCount = Math.ceil((END_DATE - now) / (1000 * 60 * 60 * 24));
+            const dDayCount = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
             
             document.getElementById('accumulated-earnings').textContent = `${Math.floor(totalAccumulated).toLocaleString('en-US')}`;
             document.getElementById('todays-earnings').textContent = `${Math.floor(todaysLiveEarnings).toLocaleString('en-US')}`;
@@ -207,19 +235,23 @@
             
             const progressPercent = (progressRatio * 100).toFixed(4);
             document.getElementById('progress-bar').style.width = `${progressPercent}%`;
-            document.getElementById('progress-text').textContent = `Progress: ${progressPercent}%`;
+            document.getElementById('progress-text').textContent = `Total Progress: ${progressPercent}%`;
             document.getElementById('d-day').textContent = `Exodus: D-${dDayCount}`;
+
+            document.getElementById('daily-progress-bar').style.width = `${dailyProgressPercent}%`;
+            document.getElementById('daily-progress-text').textContent = `${Math.floor(dailyProgressPercent)}%`;
         }
 
         function generateCalendar() {
+            const { startDate, endDate, totalLeaveDays } = currentScenario;
             const calendarGrid = document.getElementById('grind-calendar');
-            calendarGrid.innerHTML = ''; // Clear previous calendar
+            calendarGrid.innerHTML = '';
             const today = new Date();
             today.setHours(0,0,0,0);
 
-            let currentDate = new Date(START_DATE.getTime());
+            let currentDate = new Date(startDate.getTime());
             let futureWorkdays = [];
-            while(currentDate <= END_DATE) {
+            while(currentDate <= endDate) {
                 if(isWorkday(currentDate) && currentDate >= today) {
                     futureWorkdays.push(new Date(currentDate.getTime()));
                 }
@@ -227,23 +259,20 @@
             }
             
             let leaveDays = new Set();
-            for(let i = 0; i < Math.floor(TOTAL_LEAVE_DAYS); i++) {
+            for(let i = 0; i < Math.floor(totalLeaveDays); i++) {
                 if(futureWorkdays.length > i) {
                     leaveDays.add(futureWorkdays[futureWorkdays.length - 1 - i].toISOString().split('T')[0]);
                 }
             }
 
-            currentDate = new Date(START_DATE.getTime());
-            // This logic aligns the grid to start on the correct day of the week.
-            // It will render days vertically, then flow into the next column.
-            const dayMap = [6, 0, 1, 2, 3, 4, 5]; // Sun -> 6, Mon -> 0...
-            const dayOffset = dayMap[START_DATE.getDay()];
+            currentDate = new Date(startDate.getTime());
+            const dayMap = [6, 0, 1, 2, 3, 4, 5];
+            const dayOffset = dayMap[startDate.getDay()];
             for (let i = 0; i < dayOffset; i++) {
-                const emptyCell = document.createElement('div');
-                calendarGrid.appendChild(emptyCell);
+                calendarGrid.appendChild(document.createElement('div'));
             }
 
-            while (currentDate <= END_DATE) {
+            while (currentDate <= endDate) {
                 const cell = document.createElement('div');
                 cell.classList.add('day-cell');
                 const dateString = currentDate.toISOString().split('T')[0];
@@ -273,12 +302,27 @@
             }
         }
         
+        function initialize(scenarioKey) {
+            currentScenario = scenarios[scenarioKey];
+            document.getElementById('operation-title').textContent = currentScenario.title;
+            
+            document.getElementById('tab-sovereign').classList.toggle('active', scenarioKey === 'sovereign');
+            document.getElementById('tab-swift').classList.toggle('active', scenarioKey === 'swift');
+
+            if (intervalId) clearInterval(intervalId);
+            generateCalendar();
+            updateDisplay();
+            intervalId = setInterval(updateDisplay, 1000);
+        }
+
         window.onload = function() {
             const missionIndex = Math.floor(Math.random() * missions.length);
             document.getElementById('daily-mission').textContent = missions[missionIndex];
-            generateCalendar();
-            updateDisplay();
-            setInterval(updateDisplay, 1000);
+            
+            document.getElementById('tab-sovereign').addEventListener('click', () => initialize('sovereign'));
+            document.getElementById('tab-swift').addEventListener('click', () => initialize('swift'));
+
+            initialize('sovereign'); // Default scenario
         };
     </script>
 </body>
