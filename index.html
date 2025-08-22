@@ -13,11 +13,11 @@
     <meta name="application-name" content="S.Grind">
     <meta name="theme-color" content="#101010">
 
-    <!-- Icon generated as a Data URI to keep everything in one file -->
+    <!-- Icon reverted to 'X' -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23101010'/%3E%3Cpath d='M25 25 L75 75 M25 75 L75 25' stroke='%23D4AF37' stroke-width='12' stroke-linecap='round'/%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23101010'/%3E%3Cpath d='M25 25 L75 75 M25 75 L75 25' stroke='%23D4AF37' stroke-width='12' stroke-linecap='round'/%3E%3C/svg%3E">
 
-    <!-- Web App Manifest generated as a Data URI -->
+    <!-- Web App Manifest reverted to 'Sovereign Grind' -->
     <link rel="manifest" href="data:application/manifest+json,{
         &quot;name&quot;: &quot;Operation: Sovereign Grind&quot;,
         &quot;short_name&quot;: &quot;S.Grind&quot;,
@@ -42,46 +42,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
-        body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: #101010;
-        }
+        body { font-family: 'Pretendard', sans-serif; background-color: #101010; }
         .gold-text { color: #D4AF37; }
         .progress-bar-inner { transition: width 1s linear; }
         .shadow-gold { box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
-        .calendar-grid {
-            display: grid;
-            grid-template-rows: repeat(7, 1fr);
-            grid-auto-flow: column;
-            gap: 2px;
-        }
-        .day-cell {
-            width: 10px; height: 10px;
-            border-radius: 2px; position: relative;
-        }
-        .day-cell .tooltip {
-            visibility: hidden; width: 120px;
-            background-color: #1f2937; color: #fff;
-            text-align: center; border-radius: 6px;
-            padding: 5px 0; position: absolute;
-            z-index: 1; bottom: 125%; left: 50%;
-            margin-left: -60px; opacity: 0;
-            transition: opacity 0.3s;
-        }
+        .calendar-grid { display: grid; grid-template-rows: repeat(7, 1fr); grid-auto-flow: column; gap: 2px; }
+        .day-cell { width: 10px; height: 10px; border-radius: 2px; position: relative; }
+        .day-cell .tooltip { visibility: hidden; width: 120px; background-color: #1f2937; color: #fff; text-align: center; border-radius: 6px; padding: 5px 0; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -60px; opacity: 0; transition: opacity 0.3s; }
         .day-cell:hover .tooltip { visibility: visible; opacity: 1; }
         .day-cell.past { background-color: #374151; }
         .day-cell.today { background-color: #4ade80; }
         .day-cell.future { background-color: #1f2937; }
         .day-cell.future.workday { background-color: #D4AF37; opacity: 0.8; }
         .day-cell.future.leave { background-color: #3b82f6; opacity: 0.8; }
-        .tab-button {
-            transition: all 0.3s ease;
-            border-bottom: 2px solid transparent;
-        }
-        .tab-button.active {
-            color: #D4AF37;
-            border-bottom-color: #D4AF37;
-        }
     </style>
 </head>
 <body class="text-gray-200 min-h-screen flex items-center justify-center p-4">
@@ -92,15 +65,14 @@
                 <path d="M9 22H15C18.866 22 22 18.866 22 15V9C22 5.13401 18.866 2 15 2H9C5.13401 2 2 5.13401 2 9V15C2 18.866 5.13401 22 9 22Z" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M16.5 7.5L14.25 12L16.5 16.5M7.5 7.5L9.75 12L7.5 16.5" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <h1 id="operation-title" class="text-4xl font-black tracking-tighter gold-text"></h1>
+            <h1 class="text-4xl font-black tracking-tighter gold-text">Operation: Sovereign Grind</h1>
             <p class="text-gray-400 mt-1 font-semibold">Execute. Ascend. Conquer.</p>
         </header>
 
-        <!-- Scenario Tabs -->
-        <div class="flex justify-center border-b border-gray-700">
-            <button id="tab-sovereign" class="tab-button active font-bold py-2 px-4">Sovereign Grind (Dec)</button>
-            <button id="tab-swift" class="tab-button font-bold py-2 px-4">Swift Exit (Sep)</button>
-        </div>
+        <footer class="bg-gray-900 border border-gray-700 p-4 rounded-md text-center">
+            <h3 class="font-black text-xl tracking-wider gold-text">오늘의 행동 강령</h3>
+            <p id="daily-mission" class="text-gray-300 mt-2 text-sm md:text-base"></p>
+        </footer>
 
         <main class="space-y-8">
             <div class="bg-gray-900 border border-gray-700 p-6 rounded-md text-center shadow-gold">
@@ -158,48 +130,63 @@
             </div>
         </div>
 
-        <footer class="bg-gray-900 border border-gray-700 p-4 rounded-md text-center">
-            <h3 class="font-black text-xl tracking-wider gold-text">Today's Alpha Protocol</h3>
-            <p id="daily-mission" class="text-gray-300 mt-2 text-sm md:text-base"></p>
-        </footer>
-
     </div>
 
     <script>
-        const scenarios = {
-            sovereign: {
-                title: "Operation: Sovereign Grind",
-                startDate: new Date('2025-08-01T00:00:00'),
-                endDate: new Date('2025-12-31T23:59:59'),
-                totalEarnings: 24900000,
-                totalLeaveDays: 8.5,
-            },
-            swift: {
-                title: "Operation: Swift Exit",
-                startDate: new Date('2025-08-01T00:00:00'),
-                endDate: new Date('2025-09-30T23:59:59'),
-                totalEarnings: 3940000 * 2,
-                totalLeaveDays: 5.5,
-            }
-        };
-
-        let currentScenario;
-        let intervalId;
+        // --- 설정값 ---
+        const START_DATE = new Date('2025-08-01T00:00:00');
+        const END_DATE = new Date('2025-12-31T23:59:59');
+        const TOTAL_EARNINGS = 24900000; // 금액 원복
+        const TOTAL_LEAVE_DAYS = 8.5;
+        const WORK_START_HOUR = 8;
+        const WORK_END_HOUR = 17;
 
         const HOLIDAYS = ['2025-08-15', '2025-10-03', '2025-10-06', '2025-10-07', '2025-10-08', '2025-10-09', '2025-12-25'];
+
         const missions = [
-            "Engage NPC chatter with stoic indifference. Their noise is irrelevant to your mission.",
-            "Physical distress is a signal. Execute a tactical retreat. A walk to recalibrate focus. Weakness is not an option.",
-            "Headphones are your helmet. Block out the static. Maintain unwavering focus on the objective.",
-            "The midday meal is for refueling, not for beta socialization. Consume it alone. Recharge in solitude.",
-            "An NPC's emotional outburst is not your problem. Observe it as data. A case study in weakness.",
-            "The moment you exit the building, the mission for the day is complete. Purge all operational data from your mind until tomorrow.",
-            "This grind is not free. You are being paid handsomely for every second of your focus. Remember your worth.",
-            "Acknowledge physical signals of stress not as pain, but as the friction of progress. Adapt and overcome.",
-            "You are not an employee. You are a high-value asset executing a final contract. Act accordingly.",
-            "Your purpose here is singular: secure the final payout. All other objectives are secondary."
+            "오늘의 인내는 미래의 자유다.", "너는 직원이 아니다. 목표를 가진 사업가다.", "감정은 소모품, 목표는 자산이다.",
+            "고통은 지나가지만, 아파트는 남는다.", "지금의 불편함은 미래의 편안함을 위한 계약금이다.", "하루 약 30만원, 내 시간의 가치를 기억하라.",
+            "이것은 노동이 아니라, 목표 달성을 위한 계산된 행동이다.", "감정적 동요는 계좌에 1원도 도움이 되지 않는다.",
+            "가장 큰 리스크는 목표 없이 표류하는 것이다.", "명확한 목표는 최고의 방패다.", "너의 가치는 회사가 아니라, 너의 목표가 증명한다.",
+            "오늘 하루는 내 집의 벽돌 한 장이다.", "퇴사는 끝이 아니라, 다음 단계로의 진입이다.", "지금의 인내는 다음 챕터의 프롤로그다.",
+            "가장 힘든 순간이 포기하고 싶은 순간이다. 그 순간을 넘어서라.", "통제할 수 없는 것에 에너지를 낭비하지 마라.",
+            "너의 시간과 에너지가 가장 귀한 자산이다. 현명하게 투자하라.", "불평은 에너지를 갉아먹는다. 대신 숫자를 보라.",
+            "오늘의 지루함은 미래의 화려함을 위한 초석이다.", "스스로를 CEO라고 생각하라. 직원은 감정적으로 일하지만, CEO는 숫자로 일한다.",
+            "무의미한 논쟁은 시간 낭비일 뿐이다.", "그들의 평가는 너의 가치와 무관하다.", "최고의 복수는 압도적인 성공이다.",
+            "NPC의 말은 배경 소음일 뿐, 너의 미션에 영향을 주지 않는다.", "모든 대화는 인수인계를 위한 데이터 수집 과정이다.",
+            "인간관계에 쓰는 에너지를 최소화하고, 목표에 모든 것을 투자하라.", "불필요한 미팅은 정중히 거절하라. 너의 시간은 비싸다.",
+            "감정적인 공격은 무시하라. 반응하지 않는 것이 최고의 방어다.", "그들의 문제는 그들의 문제다. 네게 옮기지 마라.",
+            "헤드폰은 외부 소음을 차단하는 최고의 방화벽이다.", "상처받지 마라. 너는 곧 이곳을 떠날 외부 전문가다.",
+            "그들의 비논리는 너의 논리를 흐리게 할 수 없다.", "가장 강력한 무기는 '무관심'이다.", "너의 목표에 도움이 되지 않는 사람은 멀리하라.",
+            "모든 상호작용은 '비용'이다. 최소한의 비용으로 최대의 효율을 뽑아내라.", "너의 감정 계좌를 지켜라. 불필요한 인출을 허용하지 마라.",
+            "정치질은 패배자들의 게임이다. 너는 너의 길을 가라.", "그들의 드라마에 관객이 되어주지 마라.",
+            "가장 좋은 대답은 침묵이다.", "너의 계획을 아무에게도 말하지 마라. 결과로 증명하라.",
+            "오늘의 커피값은 미래의 주식 한 주다.", "월급날은 월급날일 뿐, 소비의 신호가 아니다.", "스트레스 비용을 만들지 말고, 스트레스를 자산으로 전환하라.",
+            "점심값 만 원 아끼면, 30년 뒤엔 15만 원이 되어 돌아온다.", "가장 확실한 투자는 '소득'이다. 퇴사 전까지 현금 흐름을 극대화하라.",
+            "소비는 미래의 부를 현재로 끌어다 쓰는 빚이다.", "퇴직금은 보너스가 아니라, 너의 인내에 대한 당연한 대가다.",
+            "목표 금액을 매일 보라. 숫자는 감정을 지배하는 가장 강력한 도구다.", "지출하기 전에 이것이 '소비'인지 '투자'인지 자문하라.",
+            "가계부를 쓰는 것은 회사의 재무제표를 분석하는 것과 같다.", "최고의 재테크는 불필요한 관계와 소비를 줄이는 것이다.",
+            "신용카드는 비상용일 뿐, 생활비 조달 수단이 아니다.", "너의 노동은 돈을 벌기 위함이고, 그 돈은 자유를 벌기 위함이다.",
+            "스트레스를 쇼핑으로 풀지 마라. 차라리 운동을 하라.", "오늘 아낀 돈이 내일의 너를 웃게 한다.",
+            "경제적 자유의 첫걸음은 오늘의 절제다.", "부자는 돈을 위해 일하지 않는다. 돈이 자신을 위해 일하게 만든다.",
+            "투자의 제1원칙: 잃지 않는 것. 소비의 제1원칙: 필요 없는 것을 사지 않는 것.", "가난해지는 가장 빠른 방법은 부자처럼 보이려고 노력하는 것이다.",
+            "최고의 투자는 너의 정신 건강이다.", "퇴근 후엔 완벽히 로그아웃하라.", "몸이 보내는 신호는 무시하지 마라.",
+            "운동은 체력을 기르는 것이 아니라, 정신력을 단련하는 것이다.", "잠은 사치가 아니라, 다음 날의 전투를 위한 필수 보급이다.",
+            "건강한 식단은 최고의 퍼포먼스를 위한 연료다.", "스트레스는 기록하고 분석하면 약점이 아니라 데이터가 된다.",
+            "하루 10분 명상은 최고의 정신 안정제다.", "부정적인 뉴스와 정보를 의도적으로 차단하라.",
+            "오늘 할 일은 오늘 끝내라. 내일의 너에게 빚을 넘기지 마라.", "휴식은 게으름이 아니라, 다음 도약을 위한 준비운동이다.",
+            "문제가 생기면 고민하지 말고, 해결책을 리스트로 만들어라.", "작은 성공을 매일 기록하고 스스로를 칭찬하라.",
+            "너의 공간을 깨끗이 유지하라. 환경이 생각을 지배한다.", "배움은 최고의 방어 수단이다. 매일 무언가를 배워라.",
+            "너를 지지하는 소수의 사람들과만 깊이 교류하라.", "스스로에게 관대해져라. 완벽할 필요는 없다. 완수하면 된다.",
+            "산책은 육체와 정신을 동시에 깨우는 가장 간단한 방법이다.", "거절하는 용기를 길러라. 모든 것을 다 할 수는 없다.",
+            "1월의 자유로운 아침을 상상하라. 알람 없이 일어나는 그 순간을.", "지금의 인내는 미래의 너에게 보내는 최고의 선물이다.",
+            "퇴사 후 떠날 여행지를 구체적으로 알아보라. 목표는 선명할수록 강력하다.", "새로운 직장에서 최고의 성과를 내는 너의 모습을 그려라.",
+            "이곳에서의 경험은 너를 더 단단하게 만들 것이다.", "몇 달 뒤, 이 모든 것은 웃으며 말할 수 있는 과거가 된다.",
+            "너의 진짜 무대는 여기가 아니다. 이곳은 단지 준비실일 뿐이다.", "오늘의 인내가 내일의 너를 만든다.",
+            "이 프로젝트의 끝은, 너의 새로운 시작이다.", "지금의 너는 미래의 너를 위해 일하고 있다. 배신하지 마라."
         ];
 
+        // --- 계산 로직 ---
         function isWeekend(date) { const day = date.getDay(); return day === 0 || day === 6; }
         function isHoliday(date) { const dateString = date.toISOString().split('T')[0]; return HOLIDAYS.includes(dateString); }
         function isWorkday(date) { return !isWeekend(date) && !isHoliday(date); }
@@ -216,26 +203,22 @@
             return count;
         }
 
+        const totalBaseWorkdays = calculateWorkdays(START_DATE, END_DATE);
+        const totalActualWorkdays = totalBaseWorkdays - TOTAL_LEAVE_DAYS;
+        const earningsPerDay = TOTAL_EARNINGS / totalActualWorkdays;
+        const earningsPerSecond = earningsPerDay / ((WORK_END_HOUR - WORK_START_HOUR) * 3600);
+        
         function updateDisplay() {
-            const { startDate, endDate, totalEarnings, totalLeaveDays } = currentScenario;
-            const WORK_START_HOUR = 8;
-            const WORK_END_HOUR = 17;
-
-            const totalBaseWorkdays = calculateWorkdays(startDate, endDate);
-            const totalActualWorkdays = totalBaseWorkdays - totalLeaveDays;
-            const earningsPerDay = totalEarnings / totalActualWorkdays;
-            const earningsPerSecond = earningsPerDay / ((WORK_END_HOUR - WORK_START_HOUR) * 3600);
-            
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-            const workdaysPassedBeforeToday = calculateWorkdays(startDate, new Date(today.getTime() - 1));
+            const workdaysPassedBeforeToday = calculateWorkdays(START_DATE, new Date(today.getTime() - 1));
             let earningsFromPreviousDays = workdaysPassedBeforeToday * earningsPerDay;
 
             let todaysLiveEarnings = 0;
             let dailyProgressPercent = 0;
 
-            if (isWorkday(now) && now >= startDate && now <= endDate) {
+            if (isWorkday(now)) {
                 const hours = now.getHours();
                 const workStartTime = new Date(today.getTime()).setHours(WORK_START_HOUR, 0, 0, 0);
                 const workEndTime = new Date(today.getTime()).setHours(WORK_END_HOUR, 0, 0, 0);
@@ -251,16 +234,16 @@
             }
             
             let totalAccumulated = earningsFromPreviousDays + todaysLiveEarnings;
-            totalAccumulated = Math.min(totalAccumulated, totalEarnings);
+            totalAccumulated = Math.min(totalAccumulated, TOTAL_EARNINGS);
             
-            const progressRatio = totalEarnings > 0 ? totalAccumulated / totalEarnings : 0;
-            const remainingEarnings = totalEarnings - totalAccumulated;
+            const progressRatio = TOTAL_EARNINGS > 0 ? totalAccumulated / TOTAL_EARNINGS : 0;
+            const remainingEarnings = TOTAL_EARNINGS - totalAccumulated;
             
-            const workdaysPassedToday = calculateWorkdays(startDate, today);
+            const workdaysPassedToday = calculateWorkdays(START_DATE, today);
             const remainingBaseWorkdays = totalBaseWorkdays - workdaysPassedToday;
-            const remainingActualWorkdays = Math.max(0, remainingBaseWorkdays - totalLeaveDays).toFixed(1);
+            const remainingActualWorkdays = Math.max(0, remainingBaseWorkdays - TOTAL_LEAVE_DAYS).toFixed(1);
 
-            const dDayCount = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+            const dDayCount = Math.ceil((END_DATE - now) / (1000 * 60 * 60 * 24));
             
             document.getElementById('accumulated-earnings').textContent = `${Math.floor(totalAccumulated).toLocaleString('en-US')}`;
             document.getElementById('todays-earnings').textContent = `${Math.floor(todaysLiveEarnings).toLocaleString('en-US')}`;
@@ -271,21 +254,19 @@
             document.getElementById('progress-bar').style.width = `${progressPercent}%`;
             document.getElementById('progress-text').textContent = `Total Progress: ${progressPercent}%`;
             document.getElementById('d-day').textContent = `Exodus: D-${dDayCount}`;
-
             document.getElementById('daily-progress-bar').style.width = `${dailyProgressPercent}%`;
             document.getElementById('daily-progress-text').textContent = `${Math.floor(dailyProgressPercent)}%`;
         }
 
         function generateCalendar() {
-            const { startDate, endDate, totalLeaveDays } = currentScenario;
             const calendarGrid = document.getElementById('grind-calendar');
             calendarGrid.innerHTML = '';
             const today = new Date();
             today.setHours(0,0,0,0);
 
-            let currentDate = new Date(startDate.getTime());
+            let currentDate = new Date(START_DATE.getTime());
             let futureWorkdays = [];
-            while(currentDate <= endDate) {
+            while(currentDate <= END_DATE) {
                 if(isWorkday(currentDate) && currentDate >= today) {
                     futureWorkdays.push(new Date(currentDate.getTime()));
                 }
@@ -293,20 +274,20 @@
             }
             
             let leaveDays = new Set();
-            for(let i = 0; i < Math.floor(totalLeaveDays); i++) {
+            for(let i = 0; i < Math.floor(TOTAL_LEAVE_DAYS); i++) {
                 if(futureWorkdays.length > i) {
                     leaveDays.add(futureWorkdays[futureWorkdays.length - 1 - i].toISOString().split('T')[0]);
                 }
             }
 
-            currentDate = new Date(startDate.getTime());
+            currentDate = new Date(START_DATE.getTime());
             const dayMap = [6, 0, 1, 2, 3, 4, 5];
-            const dayOffset = dayMap[startDate.getDay()];
+            const dayOffset = dayMap[START_DATE.getDay()];
             for (let i = 0; i < dayOffset; i++) {
                 calendarGrid.appendChild(document.createElement('div'));
             }
 
-            while (currentDate <= endDate) {
+            while (currentDate <= END_DATE) {
                 const cell = document.createElement('div');
                 cell.classList.add('day-cell');
                 const dateString = currentDate.toISOString().split('T')[0];
@@ -336,27 +317,13 @@
             }
         }
         
-        function initialize(scenarioKey) {
-            currentScenario = scenarios[scenarioKey];
-            document.getElementById('operation-title').textContent = currentScenario.title;
-            
-            document.getElementById('tab-sovereign').classList.toggle('active', scenarioKey === 'sovereign');
-            document.getElementById('tab-swift').classList.toggle('active', scenarioKey === 'swift');
-
-            if (intervalId) clearInterval(intervalId);
-            generateCalendar();
-            updateDisplay();
-            intervalId = setInterval(updateDisplay, 1000);
-        }
-
         window.onload = function() {
             const missionIndex = Math.floor(Math.random() * missions.length);
             document.getElementById('daily-mission').textContent = missions[missionIndex];
             
-            document.getElementById('tab-sovereign').addEventListener('click', () => initialize('sovereign'));
-            document.getElementById('tab-swift').addEventListener('click', () => initialize('swift'));
-
-            initialize('sovereign'); // Default scenario
+            generateCalendar();
+            updateDisplay();
+            setInterval(updateDisplay, 1000);
         };
     </script>
 </body>
